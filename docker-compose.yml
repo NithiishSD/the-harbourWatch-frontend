@@ -1,0 +1,11 @@
+name: harbourwatch-frontend
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    # Allows connecting to backend running on the host or in an external network
+    extra_hosts:
+      - "backend:host-gateway"

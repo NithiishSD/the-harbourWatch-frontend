@@ -1,0 +1,4 @@
+# Frontend build output (if a bundler is added later)
+dist/
+node_modules/
+.parcel-cache/
