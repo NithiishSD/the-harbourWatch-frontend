@@ -122,9 +122,17 @@ const app = {
   dark: new Set(),
 };
 
+const API_BASE = (window.__API_BASE__ || localStorage.getItem('api_base') || (new URLSearchParams(window.location.search).get('api') || '')).replace(/\/$/, '');
+if (new URLSearchParams(window.location.search).has('api')) {
+  localStorage.setItem('api_base', API_BASE);
+}
+function apiUrl(path) {
+  return API_BASE ? `${API_BASE}${path}` : path;
+}
+
 async function api(path, { method = 'GET', body: sent = null } = {}) {
   const headers = { Accept: 'application/json', ...(sent ? { 'Content-Type': 'application/json' } : {}) };
-  const r = await fetch(path, { method, headers, body: sent ? JSON.stringify(sent) : undefined, signal: AbortSignal.timeout(8000) });
+  const r = await fetch(apiUrl(path), { method, headers, body: sent ? JSON.stringify(sent) : undefined, signal: AbortSignal.timeout(8000) });
   let body = null;
   try { body = await r.json(); } catch { /* not JSON */ }
   if (!r.ok) throw Object.assign(new Error(body?.error?.message || `HTTP ${r.status}`), { code: body?.error?.code });
@@ -527,7 +535,7 @@ function renderClock() {
 async function loadHealth() {
   const el = $('health');
   try {
-    const r = await fetch('/health', { signal: AbortSignal.timeout(8000) });
+    const r = await fetch(apiUrl('/health'), { signal: AbortSignal.timeout(8000) });
     const body = await r.json();
     el.dataset.status = body.status === 'ok' ? 'ok' : 'degraded';
     el.textContent = Object.entries(body.checks).map(([k, v]) => `${k} ${v}`).join(' · ');
@@ -1234,7 +1242,7 @@ async function loadAlerts() {
 let streamWasDown = false;
 function connectStream() {
   const status = $('stream');
-  const es = new EventSource('/api/alerts/stream');
+  const es = new EventSource(apiUrl('/api/alerts/stream'));
   app.stream = es;
   es.onopen = () => {
     status.dataset.status = 'open'; status.textContent = 'Live';
