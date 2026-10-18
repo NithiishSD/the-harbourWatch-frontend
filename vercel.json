@@ -6,15 +6,15 @@
     },
     {
       "source": "/api/alerts/stream",
-      "destination": "https://43-205-253-177.nip.io/api/alerts/stream"
+      "destination": "https://15-252-33-247.nip.io/api/alerts/stream"
     },
     {
       "source": "/api/:path*",
-      "destination": "https://43-205-253-177.nip.io/api/:path*"
+      "destination": "https://15-252-33-247.nip.io/api/:path*"
     },
     {
       "source": "/health",
-      "destination": "https://43-205-253-177.nip.io/health"
+      "destination": "https://15-252-33-247.nip.io/health"
     }
   ],
   "headers": [
